@@ -15,12 +15,15 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 // Registrar Repositorios también para uso directo si se necesita
 builder.Services.AddScoped<IClientRepository, ClientRepository>();
-//builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
 //builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 //builder.Services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
 
 // Registrar Servicios
 builder.Services.AddScoped<IClientService, ClientService>();
+builder.Services.AddScoped<IProductService, ProductService>(); 
+builder.Services.AddScoped<IOrderService, OrderService>();
+
 
 // Add services to the container.
 builder.Services.AddControllers();
