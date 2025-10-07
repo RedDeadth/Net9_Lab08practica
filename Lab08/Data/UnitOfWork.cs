@@ -76,7 +76,6 @@ namespace Lab08.Repositories
         public void Dispose()
         {
             _context.Dispose();
-            GC.SuppressFinalize(this);
         }
     }
 }

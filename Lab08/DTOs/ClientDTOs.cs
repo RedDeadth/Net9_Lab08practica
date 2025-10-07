@@ -15,10 +15,20 @@ namespace Lab08.DTOs
         public List<OrderSummaryDto> Orders { get; set; } = new();
     }
 
-    public class OrderSummaryDto
+   
+    public class ClientWithOrderCountDto
     {
-        public int Orderid { get; set; }
-        public DateTime Orderdate { get; set; }
-        public int TotalItems { get; set; }
+        public int ClientId { get; set; }
+        public string ClientName { get; set; }
+        public string Email { get; set; }
+        public int OrderCount { get; set; }
+    }
+
+    public class ClientProductsDto
+    {
+        public int ClientId { get; set; }
+        public string ClientName { get; set; }
+        public int ProductCount { get; set; }
+        public List<string> Products { get; set; }
     }
 }
