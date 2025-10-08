@@ -1,4 +1,5 @@
 using Lab08.DTOs;
+using Lab08.Models;
 using Lab08.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,7 +8,19 @@ namespace Lab08.Services
     public interface IOrderService
     {
         Task<OrderDTOs.OrderDetailSummaryDto?> GetOrderProductDetailsAsync(int orderId);
+        Task<IEnumerable<Order>> GetAllOrdersAsync();
+        Task<Order?> GetOrderByIdAsync(int id);
+        Task<Order> CreateOrderAsync(Order order);
+        Task<Order?> UpdateOrderAsync(int id, Order order);
+        Task<bool> DeleteOrderAsync(int id);
+        
+        // Ejercicio 4: Cantidad total de productos por orden
+        Task<OrderDTOs.OrderQuantityDto?> GetTotalProductQuantityByOrderAsync(int orderId);
+        
+        // Ejercicio 6: Órdenes después de una fecha
+        Task<IEnumerable<Order>> GetOrdersAfterDateAsync(DateTime date);
     }
+    
 
     public class OrderService : IOrderService
     {
@@ -61,6 +74,69 @@ namespace Lab08.Services
 
             return orderSummary;
         }
-        
+        public async Task<IEnumerable<Order>> GetAllOrdersAsync()
+        {
+            return await _unitOfWork.Orders.GetAllAsync();
+        }
+
+        public async Task<Order?> GetOrderByIdAsync(int id)
+        {
+            return await _unitOfWork.Orders.GetByIdAsync(id);
+        }
+
+        public async Task<Order> CreateOrderAsync(Order order)
+        {
+            await _unitOfWork.Orders.AddAsync(order);
+            await _unitOfWork.SaveChangesAsync();
+            return order;
+        }
+
+        public async Task<Order?> UpdateOrderAsync(int id, Order order)
+        {
+            var existingOrder = await _unitOfWork.Orders.GetByIdAsync(id);
+            if (existingOrder == null)
+                return null;
+
+            existingOrder.Orderdate = order.Orderdate;
+            existingOrder.Clientid = order.Clientid;
+
+            _unitOfWork.Orders.Update(existingOrder);
+            await _unitOfWork.SaveChangesAsync();
+            return existingOrder;
+        }
+
+        public async Task<bool> DeleteOrderAsync(int id)
+        {
+            var order = await _unitOfWork.Orders.GetByIdAsync(id);
+            if (order == null)
+                return false;
+
+            _unitOfWork.Orders.Remove(order);
+            await _unitOfWork.SaveChangesAsync();
+            return true;
+        }
+
+        // Ejercicio 4: Obtener cantidad total de productos por orden
+        public async Task<OrderDTOs.OrderQuantityDto?> GetTotalProductQuantityByOrderAsync(int orderId)
+        {
+            var order = await _unitOfWork.Orders.GetByIdAsync(orderId);
+            if (order == null)
+                return null;
+
+            var totalQuantity = await _unitOfWork.Orders.GetTotalProductQuantityByOrderAsync(orderId);
+            
+            return new OrderDTOs.OrderQuantityDto
+            {
+                OrderId = orderId,
+                OrderDate = order.Orderdate,
+                TotalQuantity = totalQuantity
+            };
+        }
+
+        // Ejercicio 6: Obtener órdenes después de una fecha
+        public async Task<IEnumerable<Order>> GetOrdersAfterDateAsync(DateTime date)
+        {
+            return await _unitOfWork.Orders.GetOrdersAfterDateAsync(date);
+        }
     }
 }

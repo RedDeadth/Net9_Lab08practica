@@ -24,4 +24,10 @@ public class OrderDTOs
         public decimal TotalAmount { get; set; }
         public int TotalItems { get; set; }
     }
+    public class OrderQuantityDto
+    {
+        public int OrderId { get; set; }
+        public DateTime OrderDate { get; set; }
+        public int TotalQuantity { get; set; }
+    }
 }
